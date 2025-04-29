@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cookie Clicker Clone</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f3e5ab;
+    }
+    #cookie {
+      font-size: 150px;
+      cursor: pointer;
+      margin: 20px;
+      user-select: none;
+    }
+    #shop, #adminPanel, #hackList {
+      display: none;  /* Hide shop and admin panel by default */
+      margin-top: 20px;
+    }
+    .button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #adminButton {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    #closeAdminButton {
+      font-size: 30px;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+    }
+    #shop div {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cookie Clicker</h1>
+  <div id="cookie">🍪</div>
+  <p>Cookies: <span id="cookieCount">0</span></p>
+  <p>Cookies Per Second (CPS): <span id="cps">0</span></p>
+
+  <button class="button" id="shopButton">Toggle Shop</button>
+  <button class="button" id="adminButton">Admin</button>
+
+  <div id="shop">
+    <!-- Add all buildings to the shop -->
+    <div id="grandma">
+      <p>Grandma - Cost: 50 🍪</p>
+      <button class="button" id="buyGrandma">Buy</button>
+    </div>
+    <div id="farm">
+      <p>Farm - Cost: 100 🍪</p>
+      <button class="button" id="buyFarm">Buy</button>
+    </div>
+    <div id="factory">
+      <p>Factory - Cost: 500 🍪</p>
+      <button class="button" id="buyFactory">Buy</button>
+    </div>
+    <div id="mine">
+      <p>Mine - Cost: 2000 🍪</p>
+      <button class="button" id="buyMine">Buy</button>
+    </div>
+    <div id="shipment">
+      <p>Shipment - Cost: 5000 🍪</p>
+      <button class="button" id="buyShipment">Buy</button>
+    </div>
+    <div id="alchemyLab">
+      <p>Alchemy Lab - Cost: 20000 🍪</p>
+      <button class="button" id="buyAlchemyLab">Buy</button>
+    </div>
+    <div id="portal">
+      <p>Portal - Cost: 100000 🍪</p>
+      <button class="button" id="buyPortal">Buy</button>
+    </div>
+    <div id="timeMachine">
+      <p>Time Machine - Cost: 1000000 🍪</p>
+      <button class="button" id="buyTimeMachine">Buy</button>
+    </div>
+    <div id="antimatterReactor">
+      <p>Antimatter Reactor - Cost: 10000000 🍪</p>
+      <button class="button" id="buyAntimatterReactor">Buy</button>
+    </div>
+    <div id="syphonFilter">
+      <p>Syphon Filter - Cost: 100000000 🍪</p>
+      <button class="button" id="buySyphonFilter">Buy</button>
+    </div>
+    <div id="darkMatter">
+      <p>Dark Matter - Cost: 1000000000 🍪</p>
+      <button class="button" id="buyDarkMatter">Buy</button>
+    </div>
+    <div id="trueMilk">
+      <p>True Milk - Cost: 10000000000 🍪</p>
+      <button class="button" id="buyTrueMilk">Buy</button>
+    </div>
+  </div>
+
+  <div id="adminPanel">
+    <button id="closeAdminButton">✖️</button>
+    <input type="password" id="adminCodeInput" placeholder="Enter admin code" />
+    <button class="button" id="unlockAdminButton">Unlock</button>
+    <p id="adminMessage"></p>
+    <div id="hackList">
+      <h2>Infinite Hacks</h2>
+      <button class="button" id="infiniteCookies">Infinite Cookies</button>
+      <button class="button" id="infiniteCPS">Infinite CPS</button>
+      <button class="button" id="infiniteHeavenlyChips">Infinite Heavenly Chips</button>
+      <button class="button" id="unlockAllBuildings">Unlock All Buildings</button>
+      <button class="button" id="unlockAllUpgrades">Unlock All Upgrades</button>
+      <button class="button" id="infiniteGoldenCookies">Infinite Golden Cookies</button>
+      <button class="button" id="infiniteStorage">Infinite Storage</button>
+      <button class="button" id="infiniteAchievements">Infinite Achievements</button>
+      <button class="button" id="infiniteClickPower">Infinite Click Power</button>
+      <button class="button" id="infiniteTimeLapse">Infinite Time Lapse</button>
+      <button class="button" id="infiniteSeasonBuffs">Infinite Season Buffs</button>
+      <button class="button" id="enableAutoBuyers">Enable Auto-Buyers</button>
+      <button class="button" id="infiniteCookiesForAll">Infinite Cookies for All</button>
+    </div>
+  </div>
+
+  <script>
+    let cookies = 0;
+    let cps = 0;
+    let adminUnlocked = false;
+    const adminCode = "ZHG=M\\DJ*?q|<^]yZ[WRSr2|2)+Z[?(U>qQHGp?1KJ)n9Lizg}";
+
+    const cookieDisplay = document.getElementById("cookieCount");
+    const cpsDisplay = document.getElementById("cps");
+    const clickCookie = document.getElementById("cookie");
+    const shopButton = document.getElementById("shopButton");
+    const shop = document.getElementById("shop");
+    const adminButton = document.getElementById("adminButton");
+    const adminPanel = document.getElementById("adminPanel");
+    const unlockAdminButton = document.getElementById("unlockAdminButton");
+    const adminCodeInput = document.getElementById("adminCodeInput");
+    const adminMessage = document.getElementById("adminMessage");
+    const hackList = document.getElementById("hackList");
+    const closeAdminButton = document.getElementById("closeAdminButton");
+
+    // Prices for buildings
+    const buildingPrices = {
+      grandma: 50,
+      farm: 100,
+      factory: 500,
+      mine: 2000,
+      shipment: 5000,
+      alchemyLab: 20000,
+      portal: 100000,
+      timeMachine: 1000000,
+      antimatterReactor: 10000000,
+      syphonFilter: 100000000,
+      darkMatter: 1000000000,
+      trueMilk: 10000000000
+    };
+
+    // CPS values for buildings
+    const cpsValues = {
+      grandma: 1,
+      farm: 5,
+      factory: 10,
+      mine: 50,
+      shipment: 100,
+      alchemyLab: 500,
+      portal: 1000,
+      timeMachine: 5000,
+      antimatterReactor: 10000,
+      syphonFilter: 50000,
+      darkMatter: 100000,
+      trueMilk: 500000
+    };
+
+    function updateDisplay() {
+      cookieDisplay.textContent = Math.floor(cookies);
+      cpsDisplay.textContent = cps.toFixed(1);
+    }
+
+    clickCookie.addEventListener("click", () => {
+      cookies++;
+      updateDisplay();
+    });
+
+    shopButton.addEventListener("click", () => {
+      // Toggle the visibility of the shop
+      if (shop.style.display === "none" || shop.style.display === "") {
+        shop.style.display = "block";
+      } else {
+        shop.style.display = "none";
+      }
+    });
+
+    adminButton.addEventListener("click", () => {
+      adminPanel.style.display = adminPanel.style.display === "none" ? "block" : "none";
+    });
+
+    closeAdminButton.addEventListener("click", () => {
+      adminPanel.style.display = "none";
+    });
+
+    unlockAdminButton.addEventListener("click", () => {
+      if (adminCodeInput.value === adminCode) {
+        adminUnlocked = true;
+        hackList.style.display = "block";
+        adminMessage.textContent = "";
+      } else {
+        adminMessage.textContent = "Invalid code!";
+      }
+    });
+
+    // Admin hacks
+    function executeHack(hack) {
+      switch (hack) {
+        case "infinite_cookies":
+          cookies = Number.MAX_SAFE_INTEGER;
+          break;
+        case "infinite_cps":
+          cps = Number.MAX_SAFE_INTEGER;
+          break;
+        case "infinite_heavenly_chips":
+          // Add logic for Heavenly Chips here
+          break;
+        case "unlock_all_buildings":
+          Object.keys(buildingPrices).forEach(building => {
+            // Unlock all buildings here
+          });
+          break;
+        case "unlock_all_upgrades":
+          // Add logic for unlocking all upgrades
+          break;
+        case "infinite_golden_cookies":
+          // Logic for infinite golden cookies
+          break;
+        case "infinite_storage":
+          // Logic for infinite storage
+          break;
+        case "infinite_achievements":
+          // Logic for infinite achievements
+          break;
+        case "infinite_click_power":
+          // Set click power to max
+          break;
+        case "infinite_time_lapse":
+          // Speed up time
+          break;
+        case "infinite_season_buffs":
+          // Activate all seasonal buffs
+          break;
+        case "enable_auto_buyers":
+          // Enable auto-buyers
+          break;
+        case "infinite_cookies_for_all":
+          // Infinite cookies for all players
+          break;
+      }
+      updateDisplay();
+    }
+
+    // Event listeners for hack buttons
+    document.getElementById("infiniteCookies").addEventListener("click", () => executeHack("infinite_cookies"));
+    document.getElementById("infiniteCPS").addEventListener("click", () => executeHack("infinite_cps"));
+    document.getElementById("infiniteHeavenlyChips").addEventListener("click", () => executeHack("infinite_heavenly_chips"));
+    document.getElementById("unlockAllBuildings").addEventListener("click", () => executeHack("unlock_all_buildings"));
+    document.getElementById("unlockAllUpgrades").addEventListener("click", () => executeHack("unlock_all_upgrades"));
+    document.getElementById("infiniteGoldenCookies").addEventListener("click", () => executeHack("infinite_golden_cookies"));
+    document.getElementById("infiniteStorage").addEventListener("click", () => executeHack("infinite_storage"));
+    document.getElementById("infiniteAchievements").addEventListener("click", () => executeHack("infinite_achievements"));
+    document.getElementById("infiniteClickPower").addEventListener("click", () => executeHack("infinite_click_power"));
+    document.getElementById("infiniteTimeLapse").addEventListener("click", () => executeHack("infinite_time_lapse"));
+    document.getElementById("infiniteSeasonBuffs").addEventListener("click", () => executeHack("infinite_season_buffs"));
+    document.getElementById("enableAutoBuyers").addEventListener("click", () => executeHack("enable_auto_buyers"));
+    document.getElementById("infiniteCookiesForAll").addEventListener("click", () => executeHack("infinite_cookies_for_all"));
+
+    setInterval(() => {
+      cookies += cps / 10; // Add CPS to the cookie count every 0.1 second
+      updateDisplay();
+    }, 100);
+  </script>
+</body>
+</html>
